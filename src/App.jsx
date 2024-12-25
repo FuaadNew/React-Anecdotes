@@ -1,110 +1,79 @@
 import { useState } from "react"
 
-const Button = ({onClick,name}) =>{
-  return (
-    <button onClick= {()=>onClick(name)}>{name}</button>
-  )
+const Button = ({name,onClick}) =>{
+  return(<button onClick={onClick}> {name}
+
+  </button>)
 }
 
-const StatisticLine = ({text,value}) =>{
- 
+const VoteCast = ({points, selected}) =>{
+  const votes = points[selected]
+  return (<div>
+    Has {votes} points
 
-  return (
-    <div>{text} {value}</div>
-  )
-}
-
-
-
-const Statistics = ({good,neutral,bad}) =>{
-  const total = good - bad
-  const allFeedback = good + neutral + bad
-  const average = allFeedback ? total / allFeedback : 0
-  const posPercentage = allFeedback ? (good/ allFeedback) * 100: 0
-  if (allFeedback === 0){
-    return <div>No feedback given </div>
-  } else{
-    return (
-      <table>
-          <tbody>
-          <tr>
-              <td>
-              <StatisticLine text="good"value ={good} ></StatisticLine>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <StatisticLine text="neutral"value ={neutral} ></StatisticLine>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <StatisticLine text="bad"value ={bad} ></StatisticLine>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <StatisticLine text = "all" value={good + neutral + bad}></StatisticLine>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <StatisticLine text = "average" value = {average}></StatisticLine>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <StatisticLine text = "positive" value = {posPercentage}></StatisticLine>
-            </td>
-          </tr>
-        </tbody>
-        </table>
-    );
-  
-
-  }
-  
+  </div>)
 }
 
 
 
+const MostVotes = ({points, anecdotes}) =>{
+  const mostPopular =points.indexOf(Math.max(...points))
+
+
+  return (<div>
+     {Math.max(...points) != 0 ? `The anecdote with the most votes: "${anecdotes[mostPopular]}" with ${points[mostPopular]} votes `: "No votes yet"}
+
+  </div>)
+}
 
 const App = () =>{
 
-  const handleClick = (name) =>{
-    if (name === "good"){
-      setGood(good+1)
-     
-    }else if (name === "neutral"){
-      setNeutral(neutral+1)
-      
-    }else if (name === "bad"){
-      setBad(bad+1)
-    }
+
+  const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
+    'The only way to go fast, is to go well.'
+  ]
+  const [selected,setSelected] = useState(0)
+  const [points,setPoints] = useState(Array(anecdotes.length).fill(0))
+
+  
+  const chooseAnecdote = () =>{
+    const randomIndex = Math.floor(Math.random() * anecdotes.length)
+    setSelected(randomIndex)
+
+  }
+  const castVote = () =>{
+    const newPoints = [...points]
+    newPoints[selected]+=1
+    setPoints(newPoints)
+    console.log(newPoints)
+
 
   }
 
 
 
 
-  const [good,setGood] = useState(0)
-  const [neutral,setNeutral] = useState(0)
-  const [bad,setBad] = useState(0)
+ 
+  return (
+    <div>
+      {anecdotes[selected]}
+      <VoteCast points = {points} selected = {selected}></VoteCast>
+      <Button onClick={chooseAnecdote} name = "next anecdote"></Button>
+      <Button onClick={castVote} name = "Vote"></Button>
+      <MostVotes points = {points} anecdotes={anecdotes}></MostVotes>
 
-  return <div>
-    <h1>give feedback</h1>
-    <Button onClick= {handleClick} name = "good">good</Button>
-    <Button onClick= {handleClick} name = "neutral">neutral</Button>
-    <Button onClick= {handleClick} name = "bad">bad</Button>
-    <h1>statistics</h1>
-    <Statistics good = {good} neutral = {neutral} bad = {bad}></Statistics>
-    
-  </div>
-  
+      
+    </div>
+  )
 
 }
-
-
 
 
 
